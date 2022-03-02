@@ -41,5 +41,4 @@ public class EquityController {
         Equity equity = equityService.getEquityByName(equityName);
         return ResponseEntity.ok(new ResponseDto<>("Success", 1, equity));
     }
-
 }

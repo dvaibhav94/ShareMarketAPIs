@@ -1,9 +1,9 @@
 package com.share.market.user.services;
 
+import com.share.market.dtos.ResponseDto;
 import com.share.market.user.entities.User;
 import com.share.market.exception.ValidationException;
 import com.share.market.user.repositories.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,29 +15,27 @@ import java.util.Optional;
 @Service
 public class UserService {
 
+    private final UserRepository userRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    public List<User> saveUsers(@RequestBody List<User> users) {
+        return userRepository.saveAll(users);
+    }
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
-    public User getUserDetails(@PathVariable Long id) {
-        Optional<User> user = userRepository.findById(id);
-        if (user.isPresent()) {
-            return user.get();
-        }
-        throw new ValidationException("User with id " + id  + " does not exist");
+    public User getUserById(@PathVariable Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new ValidationException("User not found with id: " + id));
     }
 
-    public List<User> getUserDetailByName(@RequestParam(value = "username") String userName) {
+    public List<User> getUserByName(@RequestParam(value = "username") String userName) {
         return userRepository.findByUserName(userName);
     }
-
-    public List<User> saveUserDetail(@RequestBody List<User> users) {
-        return userRepository.saveAll(users);
-    }
-
 
 }
